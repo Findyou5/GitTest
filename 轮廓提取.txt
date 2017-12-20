@@ -8,11 +8,11 @@ using namespace cv;
 using namespace std;
 
 
-vector<vector<Point> > contours;   //ÂÖÀªÊı×é
-vector<Point2d>  centers;    //ÂÖÀªÖÊĞÄ×ø±ê 
-vector<vector<Point> >::iterator itr;  //ÂÖÀªµü´úÆ÷
-vector<Point2d>::iterator  itrc;    //ÖÊĞÄ×ø±êµü´úÆ÷
-vector<vector<Point> > con;    //µ±Ç°ÂÖÀª
+vector<vector<Point> > contours;   //è½®å»“æ•°ç»„
+vector<Point2d>  centers;    //è½®å»“è´¨å¿ƒåæ ‡ 
+vector<vector<Point> >::iterator itr;  //è½®å»“è¿­ä»£å™¨
+vector<Point2d>::iterator  itrc;    //è´¨å¿ƒåæ ‡è¿­ä»£å™¨
+vector<vector<Point> > con;    //å½“å‰è½®å»“
 
 
 int main()
@@ -20,26 +20,26 @@ int main()
 	double area;
 	double minarea = 100;
 	double maxarea = 0;
-	Moments mom; // ÂÖÀª¾Ø
+	Moments mom; // è½®å»“çŸ©
 	Mat image, gray, edge, dst;
 	namedWindow("origin");
 	namedWindow("connected_region");
 
 	image = imread("F:\\xf.jpg");
 	cvtColor(image, gray, COLOR_BGR2GRAY);
-	blur(gray, edge, Size(3, 3));   //Ä£ºıÈ¥Ôë
-	threshold(edge, edge, 200, 255, THRESH_BINARY);   //¶şÖµ»¯´¦Àí
+	blur(gray, edge, Size(3, 3));   //æ¨¡ç³Šå»å™ª
+	threshold(edge, edge, 200, 255, THRESH_BINARY);   //äºŒå€¼åŒ–å¤„ç†
 
-	/*Ñ°ÕÒÂÖÀª*/
+	/*å¯»æ‰¾è½®å»“*/
 	findContours(edge, contours,
 		CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
-	itr = contours.begin();     //Ê¹ÓÃµü´úÆ÷È¥³ıÔëÉùÂÖÀª
+	itr = contours.begin();     //ä½¿ç”¨è¿­ä»£å™¨å»é™¤å™ªå£°è½®å»“
 	while (itr != contours.end())
 	{
 		area = contourArea(*itr);
 		if (area<minarea)
 		{
-			itr = contours.erase(itr);  //itrÒ»µ©erase£¬ĞèÒªÖØĞÂ¸³Öµ
+			itr = contours.erase(itr);  //iträ¸€æ—¦eraseï¼Œéœ€è¦é‡æ–°èµ‹å€¼
 		}
 		else
 		{
@@ -52,7 +52,7 @@ int main()
 	}
 	dst = Mat::zeros(image.rows, image.cols, CV_8UC3);
 
-	/*»æÖÆÁ¬Í¨ÇøÓòÂÖÀª£¬¼ÆËãÖÊĞÄ×ø±ê*/
+	/*ç»˜åˆ¶è¿é€šåŒºåŸŸè½®å»“ï¼Œè®¡ç®—è´¨å¿ƒåæ ‡*/
 	Point2d center;
 	itr = contours.begin();
 	while (itr != contours.end())
@@ -60,12 +60,12 @@ int main()
 		area = contourArea(*itr);
 		con.push_back(*itr);
 		if (area == maxarea)
-			drawContours(dst, con, -1, Scalar(255, 255, 255), 2);  //×î´óÃæ»ıºìÉ«»æÖÆ
+			drawContours(dst, con, -1, Scalar(255, 255, 255), 2);  //æœ€å¤§é¢ç§¯çº¢è‰²ç»˜åˆ¶
 		/*else
-			drawContours(dst, con, -1, Scalar(255, 0, 0), 2);   //ÆäËüÃæ»ıÀ¶É«»æÖÆ*/
+			drawContours(dst, con, -1, Scalar(255, 0, 0), 2);   //å…¶å®ƒé¢ç§¯è“è‰²ç»˜åˆ¶*/
 		con.pop_back();
 
-		//¼ÆËãÖÊĞÄ
+		//è®¡ç®—è´¨å¿ƒ
 		mom = moments(*itr);
 		center.x = (int)(mom.m10 / mom.m00);
 		center.y = (int)(mom.m01 / mom.m00);
@@ -77,7 +77,7 @@ int main()
 	imshow("connected_region", dst);
 	waitKey(0);
 
-	/*ÂşË®Ìî³äÁ¬Í¨ÇøÓò*/
+	/*æ¼«æ°´å¡«å……è¿é€šåŒºåŸŸ*/
 	Point2d seed;
 	int new_scalar = 0;
 	int loDiff = 8, upDiff = 8;
@@ -101,7 +101,7 @@ int main()
 for (pConInner = pContour->v_next; pConInner != NULL; pConInner = pConInner->h_next)
 			{
 				nei++;
-				// ÄÚÂÖÀªÃæ»ı   
+				// å†…è½®å»“é¢ç§¯   
 				dConArea = fabs(cvContourArea(pConInner, CV_WHOLE_SEQ));
 				printf("%f\n", dConArea);
 				if (dConArea <= dAreaThre)
